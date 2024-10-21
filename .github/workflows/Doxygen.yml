@@ -39,22 +39,14 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build the Docker image
-        run: docker build . --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
-        
+        run: |
+          docker build . -t pyMaCh3-image --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
+          docker run pyMaCh3-image
+          
       - name: Make Python Venv
         run: |
           python -m venv sphinx_env
           source sphinx_env/bin/activate
-      
-      ## EM: In order to build the python documentation we first need to build the pyMaCh3 module  
-      - name: Build MaCh3
-        run: | 
-          mkdir build
-          cd build
-          cmake -DMaCh3_PYTHON_ENABLED=ON ../ 
-          make 
-          make install
-          source bin/setup.MaCh3.sh
 
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
