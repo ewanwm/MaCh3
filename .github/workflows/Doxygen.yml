@@ -40,21 +40,14 @@ jobs:
 
       - name: Build the Docker image
         run: docker build . --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
-         
-      - name: Run image
-        run: docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
 
       - name: Check python path
         run: |
+          docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
           echo MaCh3_ROOT = ${MaCh3_ROOT}
           echo PYTHONPATH = ${PYTHONPATH}
         
       - uses: actions/checkout@v4
-    
-      - name: Make Python Venv
-        run: |
-          python -m venv sphinx_env
-          source sphinx_env/bin/activate
 
       #- name: Set up MaCh3
       #  run: source /opt/MaCh3/build/bin/setup.MaCh3.sh
@@ -63,7 +56,9 @@ jobs:
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
-          export PYTHONPATH=${PYTHONPATH}:/opt/MaCh3/build/pyMaCh3
+          docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
+          python -m venv sphinx_env
+          source sphinx_env/bin/activate
           pip install -r requirements.txt
           make html
       
@@ -78,7 +73,7 @@ jobs:
         run: |
           mkdir to-upload
           mkdir to-upload/html/pyMaCh3
-          mv Doc/sphinx/* to-upload/html/pyMaCh3/
+          mv Doc/sphinx/build/html/* to-upload/html/pyMaCh3/
           
       - uses: actions/upload-artifact@v4
         with:
