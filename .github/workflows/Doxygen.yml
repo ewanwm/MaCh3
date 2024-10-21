@@ -49,8 +49,8 @@ jobs:
           python -m venv sphinx_env
           source sphinx_env/bin/activate
 
-      - name: Set up MaCh3
-        run: source /opt/MaCh3/build/bin/setup.MaCh3.sh
+      #- name: Set up MaCh3
+      #  run: source /opt/MaCh3/build/bin/setup.MaCh3.sh
 
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
