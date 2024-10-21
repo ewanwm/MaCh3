@@ -39,9 +39,10 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build the Docker image
-        run: |
-          docker build . -t pymach3-image --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
-          docker run pymach3-image
+        run: docker build . --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
+         
+      - name: Run image
+        run: docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
           
       - name: Make Python Venv
         run: |
