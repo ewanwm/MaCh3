@@ -45,7 +45,9 @@ jobs:
         run: docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
 
       - name: Check python path
-        run: echo PYTHONPATH = ${PYTHONPATH}
+        run: |
+          echo MaCh3_ROOT = ${MaCh3_ROOT}
+          echo PYTHONPATH = ${PYTHONPATH}
         
       - uses: actions/checkout@v4
     
@@ -61,6 +63,7 @@ jobs:
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
+          export PYTHONPATH=${PYTHONPATH}:/opt/MaCh3/build/pyMaCh3
           pip install -r requirements.txt
           make html
       
