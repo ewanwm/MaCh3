@@ -56,7 +56,7 @@ jobs:
 
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
-        working-directory: /opt/MaCh3/Doc/sphinx
+        working-directory: Doc/sphinx
         run: | 
           pip install -r requirements.txt
           make html
@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir to-upload
           mkdir to-upload/html/pyMaCh3
-          mv /opt/MaCh3/Doc/sphinx/* to-upload/html/pyMaCh3/
+          mv Doc/sphinx/* to-upload/html/pyMaCh3/
           
       - uses: actions/upload-artifact@v4
         with:
