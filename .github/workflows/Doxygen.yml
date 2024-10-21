@@ -43,7 +43,10 @@ jobs:
          
       - name: Run image
         run: docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
-          
+
+      - name: Check python path
+        run: echo PYTHONPATH = ${PYTHONPATH}
+        
       - uses: actions/checkout@v4
     
       - name: Make Python Venv
