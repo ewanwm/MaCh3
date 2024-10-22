@@ -15,13 +15,53 @@ on:
 jobs:
   # This workflow contains a single job called "Doxygen"
   
-  
+  Doxygen:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+      
+      # Updates the package list to ensure you get the latest version of packages
+      - run: sudo apt-get update
+
+      # Installs texlive for LaTeX support in Doxygen documentation
+      - run: sudo apt-get install -y texlive
+
+      # Installs libjs-mathjax for rendering mathematical notation in Doxygen documentation
+      - run: sudo apt-get install -y libjs-mathjax
+
+      # Install perl for bibtex
+      - run: sudo apt-get install -y perl
+
+      # Runs a single command using the runners shell
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@1.9.8
+        with:
+          doxyfile-path: './Doxyfile'
+          working-directory: ./Doc
+
+      - name: Upload Doxygen Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: DoxygenHTML
+          path: Doc/html
+          
   Sphinx:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     
     container:
       image: ghcr.io/mach3-software/mach3:alma9latest
+
+    needs: Doxygen
       
     steps:
     
@@ -31,6 +71,17 @@ jobs:
       - name: Check Python 
         run: python3 --version
 
+      - name: Download Doxygen Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: DoxygenHTML
+          location: to-upload
+
+      - name: Check Artifact
+        run: |
+          ls
+          ls to-upload
+
       - name: Build MaCh3
         run: | 
           mkdir build
@@ -38,7 +89,7 @@ jobs:
           cmake -DMaCh3_PYTHON_ENABLED=ON ../
           make 
           make install
-
+          
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
         working-directory: Doc/sphinx
@@ -53,19 +104,12 @@ jobs:
           source sphinx_env/bin/activate 
           pip install -r requirements.txt 
           make html
-      
-      #- name: Download Doxygen Artifact
-      #  uses: actions/download-artifact@master
-      #  with:
-      #    name: DoxygenHTML
-      #    location: to-upload/html
           
       ## EM: Move the generated sphinx docs into the final html folder
       - name: Move Sphinx Docs
         run: |
           ls Doc
           ls Doc/sphinx
-          mkdir to-upload
           mkdir to-upload/pyMaCh3
           mv Doc/sphinx/build/html/* to-upload/pyMaCh3/
           
