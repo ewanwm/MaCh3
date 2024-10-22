@@ -43,6 +43,11 @@ jobs:
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
+          echo BUILD DIR:
+          ls ../../build
+          echo
+          echo pyMaCh3 DIR:
+          ls ../../build/pyMaCh3
           source ../../build/bin/setup.MaCh3.sh
           python3 -m venv sphinx_env 
           source sphinx_env/bin/activate 
