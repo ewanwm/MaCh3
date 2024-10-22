@@ -38,14 +38,12 @@ jobs:
           cmake -DMaCh3_PYTHON_ENABLED=ON ../
           make 
           make install
-          
-      - name: Set up MaCh3
-        run: source build/bin/setup.MaCh3.sh
 
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
+          source ../../build/bin/setup.MaCh3.sh
           python3 -m venv sphinx_env 
           source sphinx_env/bin/activate 
           pip install -r requirements.txt 
