@@ -75,7 +75,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: DoxygenHTML
-          location: to-upload
+          path: to-upload/
 
       - name: Check Artifact
         run: |
