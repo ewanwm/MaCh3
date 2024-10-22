@@ -58,3 +58,6 @@ jobs:
             --build-arg INSTALL_OPTIONS="${{ matrix.installoptions }}"
         fi
 
+    - name: Check image
+      run: |
+        docker exec ghcr.io/${{ github.repository_owner }}/mach3:${{ matrix.os }}${{ github.ref_name }} python --version
