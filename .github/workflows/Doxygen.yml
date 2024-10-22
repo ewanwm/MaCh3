@@ -76,11 +76,15 @@ jobs:
         with:
           name: DoxygenHTML
           path: to-upload/
-
+          
       - name: Check Artifact
         run: |
           ls
           ls to-upload
+          
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: DoxygenHTML
 
       - name: Build MaCh3
         run: | 
