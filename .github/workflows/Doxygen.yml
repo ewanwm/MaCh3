@@ -43,8 +43,8 @@ jobs:
 
       - name: Check python path
         run: |
-          docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
-          echo MaCh3_ROOT = ${MaCh3_ROOT}
+          docker exec ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} \
+          echo MaCh3_ROOT = ${MaCh3_ROOT} \
           echo PYTHONPATH = ${PYTHONPATH}
         
       - uses: actions/checkout@v4
@@ -56,10 +56,10 @@ jobs:
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
-          docker run ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }}
-          python -m venv sphinx_env
-          source sphinx_env/bin/activate
-          pip install -r requirements.txt
+          docker exec ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} \
+          python -m venv sphinx_env \
+          source sphinx_env/bin/activate \
+          pip install -r requirements.txt \
           make html
       
       #- name: Download Doxygen Artifact
@@ -71,6 +71,8 @@ jobs:
       ## EM: Move the generated sphinx docs into the final html folder
       - name: Move Sphinx Docs
         run: |
+          ls Doc
+          ls Doc/sphinx
           mkdir to-upload
           mkdir to-upload/html/pyMaCh3
           mv Doc/sphinx/build/html/* to-upload/html/pyMaCh3/
