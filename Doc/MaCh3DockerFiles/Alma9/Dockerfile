@@ -22,9 +22,9 @@ ENV INSTALL_OPTIONS=${INSTALL_OPTIONS:-"VERBOSE=1"}
 ENV MACH3_WORK_DIR=/opt/MaCh3/
 ENV MACH3_INSTALL_DIR=/opt/MaCh3/build/
 
-RUN dnf install openssl-devel bzip2-devel libffi-devel
-RUN dnf groupinstall "Development Tools"
-RUN dnf install python3
+RUN dnf -y install openssl-devel bzip2-devel libffi-devel
+RUN dnf -y groupinstall "Development Tools"
+RUN dnf -y install python3
 
 RUN mkdir -p ${MACH3_WORK_DIR}
 
