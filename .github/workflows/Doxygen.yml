@@ -19,13 +19,9 @@ jobs:
   Sphinx:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    env:
-      dockerfile: Doc/MaCh3DockerFiles/Ubuntu22.04/Dockerfile
-      dockertag: ubuntu22.04latest
-      cmakeoptions: -DMaCh3_PYTHON_ENABLED=ON
-
-    #needs: Doxygen
+    
+    container:
+      image: ghcr.io/mach3-software/mach3:alma9latest
       
     steps:
     
@@ -33,33 +29,26 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check Python 
-        run: which python
+        run: python3 --version
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Build the Docker image
-        run: docker build . --file ${{ env.dockerfile }} --tag ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} --build-arg CMAKE_OPTIONS="${{ env.cmakeoptions }}"
-
-      - name: Check python path
-        run: |
-          docker exec ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} \
-          echo MaCh3_ROOT = ${MaCh3_ROOT} \
-          echo PYTHONPATH = ${PYTHONPATH}
-        
-      - uses: actions/checkout@v4
-
-      #- name: Set up MaCh3
-      #  run: source /opt/MaCh3/build/bin/setup.MaCh3.sh
+      - name: Build MaCh3
+        run: | 
+          mkdir build
+          cd build 
+          cmake -DMaCh3_PYTHON_ENABLED=ON ../
+          make 
+          make install
+          
+      - name: Set up MaCh3
+        run: source build/bin/setup.MaCh3.sh
 
       ## EM: Now generate the sphinx documentation
       - name: Sphinx Build    
         working-directory: Doc/sphinx
         run: | 
-          docker exec ghcr.io/${{ github.repository_owner }}/mach3:${{ env.dockertag }} \
-          python -m venv sphinx_env \
-          source sphinx_env/bin/activate \
-          pip install -r requirements.txt \
+          python3 -m venv sphinx_env 
+          source sphinx_env/bin/activate 
+          pip install -r requirements.txt 
           make html
       
       #- name: Download Doxygen Artifact
